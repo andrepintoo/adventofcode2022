@@ -30,42 +30,52 @@ func main(){
 		//Sum = +1 ; +2; +3
 		//Sum+= 0 lost, 3 draw, 6 win
 
-		// Strategy guide: Y -> Paper, X -> Rock, Z -> scissors
+		// Strategy guide PART 1: Y -> Paper, X -> Rock, Z -> scissors
+		// Strategy guide PART 2: Y -> needs to draw, X -> to lose, Z -> for me to win 
 		opponent, me := chars[0], chars[1]
 		if opponent == "A" {
 			if me == "Y" {
-				score += (2+6)
-				continue
-			}
-			if me == "X" {
+				// score += (2 + 6)
 				score += (1 + 3)
 				continue
 			}
-			score += (3 + 0)
+			if me == "X" {
+				// score += (1 + 3) 
+				score += (3 + 0)
+				continue 
+			}
+			// score += (3 + 0)
+			score += (2 + 6)
 			continue
 		}
 		if opponent == "B" {
 			if me == "Y" {
-				score += (2+3)
-				continue
-			}
-			if me == "X" {
-				score += (1 + 0) 
+			//	score += (2 + 3)
+				score += (2 + 3)
 				continue 
 			}
+			if me == "X" {
+			//	score += (1 + 0) 
+				score += (1 + 0)
+				continue 
+			}
+			//score += (3 + 6)
 			score += (3 + 6)
 			continue
 		}
 		// scissors
 		if me == "Y" {
-			score += (2+0)
-			continue
-		}
-		if me == "X" {
-			score += (1 + 6) 
+			//score += (2+0) 
+			score += (3 + 3)
 			continue 
 		}
-		score += (3 + 3)
+		if me == "X" {
+		//	score += (1 + 6) 
+			score += (2 + 0)
+			continue 
+		}
+		//score += (3 + 3)
+		score += (1 + 6)
 	}
 
 	fmt.Printf("Score: %d\n", score)
