@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"bufio"
+	"log"
 )
 
 func main(){
