@@ -23,12 +23,19 @@ func (s *Stack[T]) Push(val T) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
-	//	s.values = append([]T{val}, s.values...) less performance
-	if len(s.values) != 0 {
+	//s.values = append([]T{val}, s.values...)
+
+	//if len(s.values) != 0 {
+	//	s.values = append(s.values, val)
+	//	copy(s.values[1:], s.values)
+	//}
+	//s.values[0] = val
+
+	if len(s.values) < s.capacity {
 		s.values = append(s.values, val)
-		copy(s.values[1:], s.values)
+    	} else {
+		s.values = append([]T{val}, s.values[:s.capacity-1]...)
 	}
-	s.values[0] = val
 }
 
 func (s *Stack[T]) Pop() (T, error) {
@@ -53,7 +60,7 @@ func (s *Stack[T]) Peek() (T, error) {
 	return s.values[0], nil
 }
 
-func (s *Stack[T]) Len() T{
+func (s *Stack[T]) Len() int{
 	return	len(s.values)
 }
 
