@@ -25,17 +25,17 @@ func (s *Stack[T]) Push(val T) {
 
 	//s.values = append([]T{val}, s.values...)
 
-	//if len(s.values) != 0 {
-	//	s.values = append(s.values, val)
-	//	copy(s.values[1:], s.values)
-	//}
-	//s.values[0] = val
-
-	if len(s.values) < s.capacity {
+	if len(s.values) != 0 {
 		s.values = append(s.values, val)
-    	} else {
-		s.values = append([]T{val}, s.values[:s.capacity-1]...)
+		copy(s.values[1:], s.values)
 	}
+	s.values[0] = val
+
+	//if len(s.values) < s.capacity {
+	//	s.values = append(s.values, val)
+    	//} else {
+	//	s.values = append([]T{val}, s.values[:s.capacity-1]...)
+	//}
 }
 
 func (s *Stack[T]) Pop() (T, error) {
@@ -43,7 +43,8 @@ func (s *Stack[T]) Pop() (T, error) {
 	defer s.lock.Unlock()
 
 	if len(s.values) == 0 {
-		return T{}, errors.New("empty stack")
+		var zeroVal T
+		return zeroVal, errors.New("empty stack")
 	}
 	
 	val := s.values[0]
@@ -54,14 +55,15 @@ func (s *Stack[T]) Pop() (T, error) {
 // Return the top element without removing it
 func (s *Stack[T]) Peek() (T, error) {
 	if len(s.values) == 0 {
-		return T{}, errors.New("empty stack")
+		var zeroVal T
+		return zeroVal, errors.New("empty stack")
 	}
 
 	return s.values[0], nil
 }
 
 func (s *Stack[T]) Len() int{
-	return	len(s.values)
+	return len(s.values)
 }
 
 // Clears the stack

@@ -5,11 +5,11 @@ import (
 	"os"
 	"bufio"
 	"log"
-	"github.com/andrepintoo/adventofcode2022/utils"
+	u "github.com/andrepintoo/adventofcode2022/utils"
 )
 
 func main(){
-	st := utils.NewStack(int)
+	st := u.NewStack[int](10)
 	st.Push(1)
 	fmt.Printf("done")
 	file, err := os.Open("input.txt")
@@ -21,6 +21,7 @@ func main(){
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
+		fmt.Println(line)
 	}
 
 	if err = scanner.Err(); err != nil {
