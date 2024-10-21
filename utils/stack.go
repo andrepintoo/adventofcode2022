@@ -9,6 +9,7 @@ import (
 // it is debatable but slices are usually more efficient due to better memory locality and lower memory overhead (no extra pointers)
 // any is an alias for interface{} 
 
+// TODO: testing
 type Stack[T any] struct {
 	values []T
 	capacity int
@@ -23,19 +24,13 @@ func (s *Stack[T]) Push(val T) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
-	//s.values = append([]T{val}, s.values...)
+	s.values = append([]T{val}, s.values...)
 
-	if len(s.values) != 0 {
-		s.values = append(s.values, val)
-		copy(s.values[1:], s.values)
-	}
-	s.values[0] = val
-
-	//if len(s.values) < s.capacity {
+	//if len(s.values) != 0 {
 	//	s.values = append(s.values, val)
-    	//} else {
-	//	s.values = append([]T{val}, s.values[:s.capacity-1]...)
+	//	copy(s.values[1:], s.values)
 	//}
+	//s.values[0] = val
 }
 
 func (s *Stack[T]) Pop() (T, error) {
@@ -74,3 +69,9 @@ func (s *Stack[T]) Clear() {
 	s.values = make([]T, 0, s.capacity)
 }
 
+func (s *Stack[T]) GetValues() []T {
+	s.lock.Lock()
+	defer s.lock.Unlock()
+
+	return append([]T(nil), s.values...)
+}
