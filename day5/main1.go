@@ -8,7 +8,7 @@ import (
 	"strings"
 	"strconv"
 	"regexp"
-	
+	"github.com/andrepintoo/adventofcode2022/utils"	
 )
 
 type MoveBoxes struct {
@@ -55,7 +55,14 @@ func main(){
 			}
 		}
 	}
-	
+
+	// for i:=0; i < numRows; i++ {
+	// 	fmt.Println(matrix[i])
+	// }
+	// for i:=0; i<len(moves);i++ {
+	// 	fmt.Println(moves[i])
+	// }
+
 	// Do the moves onto the crates
 	for i:=0; i < len(moves); i++ {
 		mbox := moves[i]
@@ -66,22 +73,19 @@ func main(){
 				fmt.Printf("Error: Stack %d is empty, cannot move more crates\n", f)
 				return
 			}
-			aux = matrix[f][len(matrix[f])-1] // get the last element
-			// matrix[f] = utils.RemoveIndex[string](matrix[f], len(matrix[f])-1)
-			matrix[f] = matrix[f][:len(matrix[f])-1] // remove the last element
-			matrix[t] = append(matrix[t], aux) // append the removed element to the 'to' slice
+			aux = matrix[f][0] // get the first element
+			matrix[f] = utils.RemoveIndex[string](matrix[f], 0) // remove the first element
+			matrix[t] = append([]string{aux}, matrix[t]...) // append the removed element to the 'to' slice
 		}
 	}
 
 	fmt.Println("finished")
 	var result string
 	for i := 0; i < numRows; i++{
-		if len(matrix[i]) > 0 {
-			result += matrix[i][len(matrix[i])-1]
-		}
+		result += matrix[i][0]
 	}
 
-	fmt.Printf("Final result is: %s", result)
+	fmt.Printf("Final result is: %s\n", result)
 	if err = scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
@@ -108,7 +112,8 @@ func fillMovements(line string, moves *[]MoveBoxes) error {
 		return fmt.Errorf("invalid 'to' value: %s", numbers[2])
 	}
 
-	newMove := MoveBoxes{moves: moveCount, from: from, to: to}
+	// -1 since the problem description is 1-based and not 0-based
+	newMove := MoveBoxes{moves: moveCount, from: from - 1, to: to - 1}
 	*moves = append(*moves, newMove)
 	return nil
 }
