@@ -8,7 +8,6 @@ import (
 	"strings"
 	"strconv"
 	"regexp"
-	"github.com/andrepintoo/adventofcode2022/utils"	
 )
 
 type MoveBoxes struct {
@@ -56,9 +55,9 @@ func main(){
 		}
 	}
 
-	// for i:=0; i < numRows; i++ {
-	// 	fmt.Println(matrix[i])
-	// }
+	for i:=0; i < numRows; i++ {
+	 	fmt.Println(matrix[i])
+	}
 	// for i:=0; i<len(moves);i++ {
 	// 	fmt.Println(moves[i])
 	// }
@@ -67,16 +66,23 @@ func main(){
 	for i:=0; i < len(moves); i++ {
 		mbox := moves[i]
 		m,f,t := mbox.moves, mbox.from, mbox.to
-		var aux string
-		for j:=0; j < m; j++ {
-			if len(matrix[f]) == 0 {
-				fmt.Printf("Error: Stack %d is empty, cannot move more crates\n", f)
-				return
-			}
-			aux = matrix[f][0] // get the first element
-			matrix[f] = utils.RemoveIndex[string](matrix[f], 0) // remove the first element
-			matrix[t] = append([]string{aux}, matrix[t]...) // append the removed element to the 'to' slice
+
+		if m > len(matrix[f]) {
+			fmt.Printf("Error: Cannot move %d boxes from stack %d, only %d available\n", m, f, len(matrix[f]))
+			return
 		}
+
+		// remove m boxes from f to t
+		aux := make([]string, m)
+		copy(aux, matrix[f][:m])
+
+		matrix[f] = matrix[f][m:]
+		matrix[t] = append(aux, matrix[t]...)
+	}
+	fmt.Println("-------------")
+
+	for i:=0; i < numRows; i++ {
+	 	fmt.Println(matrix[i])
 	}
 
 	fmt.Println("finished")
