@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
 type Directory struct {
 	name     string
-	size     int
+	size     int64
 	parent   *Directory
 	children map[string]*Directory
 }
@@ -52,50 +53,79 @@ func printCurrentPath() {
 	fmt.Println("Current path: ", strings.Join(path, "/"))
 }
 
+func getCommandInput(line string, command string) string {
+	parts := strings.SplitN(line, command, 2)
+	if len(parts) != 2 {
+		fmt.Printf("couldn't parse command: %v\n", line)
+		os.Exit(1)
+	}
+	return strings.TrimSpace(parts[1])
+}
+
+func traverseDirectory(dir *Directory, res *int64) int64 {
+	totalSize := dir.size
+	for _, child := range dir.children {
+		totalSize += traverseDirectory(child, res)
+	}
+	dir.size = totalSize
+	if totalSize < 100000 {
+		*res += totalSize
+	}
+	fmt.Printf("Directory %s, total size: %d \n", dir.name, dir.size)
+	return totalSize
+}
+
 // TODO: todo
 // FIXME: fixme
 // WARNING: warning
 
 func main() {
-	file, err := os.Open("example.txt")
+	file, err := os.Open("input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
-	var result int
-	sizeMap := make(map[string]int)
 	scanner := bufio.NewScanner(file)
+	firstLine := true
 	for scanner.Scan() {
 		line := scanner.Text()
-		if strings.Contains(line, "$ cd") {
-
+		if firstLine {
+			firstLine = false
+			continue
 		}
+		if strings.HasPrefix(line, "$ cd") {
+			dir := getCommandInput(line, "$ cd")
+			changeDirectory(dir)
+			continue
+		}
+		if strings.HasPrefix(line, "$ ls") {
+			continue
+		}
+		if strings.HasPrefix(line, "dir") {
+			dir := getCommandInput(line, "dir")
+			current.children[dir] = NewDirectory(dir, current)
+			continue
+		}
+		// we get to a file
+		lsResult := strings.Split(line, " ")
+		if len(lsResult) != 2 {
+			fmt.Printf("error in line: %s\n", line)
+			os.Exit(1)
+		}
+		size, err := strconv.ParseInt(lsResult[0], 10, 64)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		current.size += size
 	}
 
+	var result int64
+	traverseDirectory(root, &result)
+
 	fmt.Printf("Result: %v\n", result)
+
 	if err = scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
-	// fmt.Println("Initial directory setup:")
-	// printCurrentPath() // Should show "/"
-	//
-	// // Add some directories for testing
-	// current.children["subdir1"] = NewDirectory("subdir1", current)
-	// current.children["subdir2"] = NewDirectory("subdir2", current)
-	//
-	// // Move into "subdir1"
-	// changeDirectory("subdir1")
-	// printCurrentPath() // Should show "/subdir1"
-	//
-	// current.children["novo"] = NewDirectory("novo", current)
-	// changeDirectory("novo")
-	// printCurrentPath() // Should show "/"
-	// // Move back to root
-	// changeDirectory("/")
-	// printCurrentPath() // Should show "/"
-	//
-	// // Move into "subdir2"
-	// changeDirectory("subdir2")
-	// printCurrentPath() // Should show "/subdir2"
 }
