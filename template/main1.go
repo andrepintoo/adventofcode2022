@@ -19,6 +19,7 @@ func main(){
 		line := scanner.Text()
 	}
 
+	fmt.Printf("Result: %d \n", ..)
 	if err = scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
